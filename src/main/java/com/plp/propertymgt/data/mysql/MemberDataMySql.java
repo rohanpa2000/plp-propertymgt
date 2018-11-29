@@ -9,16 +9,17 @@ import java.util.Date;
 import java.util.List;
 
 import com.plp.propertymgt.config.Configuration;
+import com.plp.propertymgt.data.MemberData;
 import com.plp.propertymgt.model.Member;
 
-public class MemberDataMySql {
+public class MemberDataMySql implements MemberData{
 	
 	static String url = Configuration.DB_URL;
 	static String user = Configuration.DB_USER;
 	static String pass = Configuration.DB_PWD;
 	
+	@Override
 	public List<Member> getMembers(int tenantId){
-		
 		
 		List<Member> entities = new ArrayList<Member>();
 		
@@ -51,6 +52,7 @@ public class MemberDataMySql {
 		return entities;
 	}
 	
+	@Override
 	public void updateMember(Member entity){
 		try(Connection conn = DriverManager.getConnection (url, user, pass);){
 		
@@ -71,7 +73,8 @@ public class MemberDataMySql {
 			e.printStackTrace();
 		}
 	}
-		
+	
+	@Override
 	public void deleteMembers(List<Member> entities, int tenantid){
 		try(Connection conn = DriverManager.getConnection (url, user, pass);){
 			
@@ -95,6 +98,7 @@ public class MemberDataMySql {
 		}
 	}
 
+	@Override
 	public void addMember(Member entity){
 		try(Connection conn = DriverManager.getConnection (url, user, pass);){
 		
