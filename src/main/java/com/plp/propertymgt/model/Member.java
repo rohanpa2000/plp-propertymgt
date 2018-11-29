@@ -1,5 +1,7 @@
 package com.plp.propertymgt.model;
 
+import com.google.gson.internal.LinkedTreeMap;
+
 public class Member {
 	
 	private int id;
@@ -23,6 +25,28 @@ public class Member {
                 "email: " + email +"\r" +
         		"postal: " + postal +"\r";
     }
+	
+	public static Member getFromLinkedTreeMap(LinkedTreeMap<?,?> linkedMap){
+		
+		Member member = new Member();
+		
+		try{
+			member.setId((int) Double.parseDouble((linkedMap.get("id").toString())));
+			member.setTenantId((int) linkedMap.get("tenantId"));
+			member.setName((String) linkedMap.get("name"));
+			member.setNickName((String) linkedMap.get("nickName"));
+			member.setDisplayName((String) linkedMap.get("displayName"));
+			member.setPhone((String) linkedMap.get("phone"));
+			member.setEmail((String) linkedMap.get("email"));
+			member.setPostal((String) linkedMap.get("postal"));
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+    	
+		return member;
+	}
+
 	
 	public int getId() {
 		return id;
