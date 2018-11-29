@@ -32,7 +32,7 @@ public class Member {
 		
 		try{
 			member.setId((int) Double.parseDouble((linkedMap.get("id").toString())));
-			member.setTenantId((int) linkedMap.get("tenantId"));
+			member.setTenantId((int) Double.parseDouble((linkedMap.get("tenantId").toString())));
 			member.setName((String) linkedMap.get("name"));
 			member.setNickName((String) linkedMap.get("nickName"));
 			member.setDisplayName((String) linkedMap.get("displayName"));
