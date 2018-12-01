@@ -15,7 +15,7 @@ CREATE PROCEDURE sp_update_member_by_id_tenantid
 
 )
 BEGIN
-UPDATE booking
+UPDATE member
 SET
 	member_id = p_member_id,
 	tenant_id = p_tenant_id,

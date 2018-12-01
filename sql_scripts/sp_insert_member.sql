@@ -12,9 +12,8 @@ CREATE PROCEDURE sp_insert_member
 	p_postal varchar(45)
 )
 BEGIN
-INSERT INTO booking
+INSERT INTO member
 (
-	member_id,
 	tenant_id,
 	name,
 	nickname,
@@ -25,7 +24,6 @@ INSERT INTO booking
 )
 VALUES
 (
-	p_member_id,
 	p_tenant_id,
 	p_name,
 	p_nickname,
