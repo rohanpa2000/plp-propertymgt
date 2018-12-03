@@ -5,6 +5,7 @@ import java.util.List;
 import com.plp.propertymgt.data.MemberData;
 import com.plp.propertymgt.data.mysql.MemberDataMySql;
 import com.plp.propertymgt.model.Member;
+import com.plp.propertymgt.utility.Helper;
 
 public class MemberBusiness {
 	
@@ -14,8 +15,24 @@ public class MemberBusiness {
 		 return memberData.getMembers(tenantId);
 	 }
 	 
-	 public void updateMember(Member entity){
-		 memberData.updateMember(entity);		 
+	 public void updateMember(Member member){
+		 
+		 if (!member.getNickName().trim().equals("") && member.getDisplayName().trim().equals("")){
+			 
+			 String sourceText = member.getNickName().trim();
+			 
+			 try {
+				String sinText = Helper.getTranslatedText(sourceText, "en", "si");
+				String taText = Helper.getTranslatedText(sourceText, "en", "ta");
+				
+				member.setDisplayName(sinText + " - " + taText);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 
+		 memberData.updateMember(member);		 
 	 }
 	 
 	 public void deleteMembers(List<Member> entities, int tenantid){

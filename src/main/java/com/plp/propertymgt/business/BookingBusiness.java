@@ -21,7 +21,7 @@ public class BookingBusiness {
 	MotionBusiness motionBusiness = new MotionBusiness(); 
 	
 	
-	public List<Incident> getLastIncidents(){
+	public List<Incident> getLastIncidents(){ 
 		
 		return motionBusiness.getLastIncidents();
 		

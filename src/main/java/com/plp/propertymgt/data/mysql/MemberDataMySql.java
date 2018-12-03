@@ -88,7 +88,7 @@ public class MemberDataMySql implements MemberData{
 			
 			
 			statement.setString(1, memberids);
-			statement.setInt(1, tenantid);
+			statement.setInt(2, tenantid);
 			
 			statement.executeUpdate();
 		}
