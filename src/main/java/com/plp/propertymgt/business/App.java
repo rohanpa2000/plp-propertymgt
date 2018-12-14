@@ -48,7 +48,7 @@ public class App
     			
     			//System.out.println(bookingBusiness.getLastIncidents());
     			
-    			System.out.println(bookingBusiness.getBookings(startDate));
+    			//System.out.println(bookingBusiness.getBookings(startDate));
     			
     		} catch (ParseException e) {
     			// TODO Auto-generated catch block

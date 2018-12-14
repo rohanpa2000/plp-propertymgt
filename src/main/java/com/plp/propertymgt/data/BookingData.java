@@ -6,8 +6,8 @@ import java.util.List;
 import com.plp.propertymgt.model.Booking;
 
 public interface BookingData {
-	 List<Booking> getBookings(Date bookingDate);
+	 List<Booking> getBookings(Date bookingDate,int tenantId);
 	 void updateBooking(Booking booking);
 	 void addBooking(Booking booking);
-	 void deleteBookings(List<Booking> bookings);
+	 void deleteBookings(List<Booking> bookings, int tenantid);
 }

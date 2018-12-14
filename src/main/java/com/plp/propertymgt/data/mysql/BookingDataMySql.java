@@ -19,32 +19,49 @@ public class BookingDataMySql implements BookingData {
 	static String pass = Configuration.DB_PWD;
 	
 	@Override
-	public List<Booking> getBookings(Date bookingDate){
+	public List<Booking> getBookings(Date bookingDate, int tenantId){
 		
 		
 		List<Booking> bookings = new ArrayList<Booking>();
 		
 		try(Connection conn = DriverManager.getConnection (url, user, pass);){
 		
-			PreparedStatement seletMotionStatement = conn.prepareStatement("CALL sp_select_booking_by_booking_date(?)");
+			PreparedStatement seletMotionStatement = conn.prepareStatement("CALL sp_select_booking_by_booking_date(?,?)");
 			
 			seletMotionStatement.setDate(1,new java.sql.Date(bookingDate.getTime()));
+			//seletMotionStatement.setDate(1,java.sql.Date.valueOf("2018-12-15"));
+			seletMotionStatement.setInt(2, tenantId);
 			
 			ResultSet results =  seletMotionStatement.executeQuery();
+
+			//System.out.println("bookingDate " + results);
 			
 			while (results.next()) {
+
 				Booking booking = new Booking();
 				
-				booking.setId(results.getInt("id"));
-				booking.setCourtName(results.getString("court_name"));
-				booking.setBookingDate(results.getTimestamp("booking_date"));
+				booking.setId(results.getInt("booking_id"));
+				booking.setTenantId(results.getInt("tenant_id"));
+				booking.setMemberId(results.getInt("member_id"));
+				booking.setItemId(results.getInt("item_id"));
+				booking.setBookingDate(results.getTimestamp("booking_date"));			
 				booking.setStartTime(results.getTimestamp("start_time"));
 				booking.setEndTime(results.getTimestamp("end_time"));
-				booking.setCustomerName(results.getString("customer_name"));
+				booking.setActualStartTime(results.getTimestamp("actual_start_time"));
+				booking.setActualEndTime(results.getTimestamp("actual_end_time"));
 				booking.setCost(results.getInt("cost"));
-				booking.setCompleted(results.getBoolean("is_completed"));
+				booking.setCompleted(results.getBoolean("is_paid"));
+				booking.setCustomerName(results.getString("member_display_name"));
+				
+				booking.setCourtName(results.getString("instance_name"));
+				
+				//System.out.println(new java.sql.Date(bookingDate.getTime()));
+				//System.out.println(results.getString("in_date"));
+				
+				
 				
 				bookings.add(booking);
+				
 			}
 		}
 		catch (Exception e){
@@ -56,28 +73,40 @@ public class BookingDataMySql implements BookingData {
 	@Override
 	public void updateBooking(Booking booking){
 		try(Connection conn = DriverManager.getConnection (url, user, pass);){
-		
-			PreparedStatement seletMotionStatement = conn.prepareStatement("CALL sp_update_booking_by_id(?,?,?,?,?,?,?,?)");
+					
+			PreparedStatement seletMotionStatement = conn.prepareStatement("CALL sp_update_booking_by_id(?,?,?,?,?,?,?,?,?,?,?)");
 			
 			seletMotionStatement.setInt(1, booking.getId());
-			seletMotionStatement.setString(2, booking.getCourtName());
-			seletMotionStatement.setDate(3, new java.sql.Date(booking.getBookingDate().getTime()));
-			seletMotionStatement.setTimestamp(4, new java.sql.Timestamp(booking.getStartTime().getTime()));
-			seletMotionStatement.setTimestamp(5, new java.sql.Timestamp(booking.getEndTime().getTime()));
-			seletMotionStatement.setString(6, booking.getCustomerName());
-			seletMotionStatement.setInt(7, booking.getCost());
-			seletMotionStatement.setBoolean(8, booking.isCompleted());
+			seletMotionStatement.setInt(2, booking.getTenantId());
+			seletMotionStatement.setInt(3, booking.getMemberId());
+			seletMotionStatement.setString(4, booking.getCustomerName());
+			seletMotionStatement.setInt(5, booking.getItemId());
+			seletMotionStatement.setTimestamp(6, new java.sql.Timestamp(booking.getStartTime().getTime()));
+			seletMotionStatement.setTimestamp(7, new java.sql.Timestamp(booking.getEndTime().getTime()));
 			
+			
+			if (booking.getActualStartTime() != null)
+				seletMotionStatement.setTimestamp(8, new java.sql.Timestamp(booking.getActualStartTime().getTime()));
+			else
+				seletMotionStatement.setTimestamp(8, null);
+			
+			if (booking.getActualEndTime() != null)
+				seletMotionStatement.setTimestamp(9, new java.sql.Timestamp(booking.getActualEndTime().getTime()));
+			else
+				seletMotionStatement.setTimestamp(9, null);			
+			
+			
+			seletMotionStatement.setInt(10, booking.getCost());
+			seletMotionStatement.setBoolean(11, booking.isCompleted());
 			seletMotionStatement.executeUpdate();
 		}
 		catch (Exception e){
 			e.printStackTrace();
 		}
-	}
-	
+	}	
 	
 	@Override
-	public void deleteBookings(List<Booking> bookings){
+	public void deleteBookings(List<Booking> bookings, int tenantid){
 		try(Connection conn = DriverManager.getConnection (url, user, pass);){
 			
 			String bookingIds = "";
@@ -87,11 +116,13 @@ public class BookingDataMySql implements BookingData {
 			
 			bookingIds = bookingIds.substring(0, bookingIds.length() - 1);
 			
-			PreparedStatement seletMotionStatement = conn.prepareStatement("CALL sp_delete_bookings_by_ids(?)");
+			PreparedStatement seletMotionStatement = conn.prepareStatement("CALL sp_delete_bookings_by_ids(?,?)");
 			
-			System.out.println("bookingIds " + bookingIds);
+			//System.out.println("bookingIds " + bookingIds);
+			//System.out.println("tenantId " + tenantid);
 			
 			seletMotionStatement.setString(1, bookingIds);
+			seletMotionStatement.setInt(2, tenantid);
 			
 			seletMotionStatement.executeUpdate();
 		}
@@ -105,16 +136,20 @@ public class BookingDataMySql implements BookingData {
 	public void addBooking(Booking booking){
 		try(Connection conn = DriverManager.getConnection (url, user, pass);){
 		
-			PreparedStatement seletMotionStatement = conn.prepareStatement("CALL sp_insert_booking(?,?,?,?,?,?,?,?)");
+			PreparedStatement seletMotionStatement = conn.prepareStatement("CALL sp_insert_booking(?,?,?,?,?,?,?,?,?)");
 			
 			seletMotionStatement.setInt(1, booking.getId());
-			seletMotionStatement.setString(2, booking.getCourtName());
-			seletMotionStatement.setDate(3, new java.sql.Date(booking.getBookingDate().getTime()));
-			seletMotionStatement.setTimestamp(4, new java.sql.Timestamp(booking.getStartTime().getTime()));
-			seletMotionStatement.setTimestamp(5, new java.sql.Timestamp(booking.getEndTime().getTime()));
-			seletMotionStatement.setString(6, booking.getCustomerName());
-			seletMotionStatement.setInt(7, booking.getCost());
-			seletMotionStatement.setBoolean(8, booking.isCompleted());
+			//seletMotionStatement.setString(2, booking.getCourtName());
+			seletMotionStatement.setDate(2, new java.sql.Date(booking.getBookingDate().getTime()));
+			seletMotionStatement.setTimestamp(3, new java.sql.Timestamp(booking.getStartTime().getTime()));
+			seletMotionStatement.setTimestamp(4, new java.sql.Timestamp(booking.getEndTime().getTime()));
+			seletMotionStatement.setString(5, booking.getCustomerName());
+			seletMotionStatement.setInt(6, booking.getCost());
+			seletMotionStatement.setBoolean(7, booking.isCompleted());
+			seletMotionStatement.setInt(8, booking.getTenantId());
+			seletMotionStatement.setInt(9, booking.getItemId());
+			
+			//System.out.println("finish pro");
 			
 			seletMotionStatement.executeUpdate();
 		}

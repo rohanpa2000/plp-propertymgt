@@ -25,6 +25,10 @@ public class Booking {
 	private Date actualEndTime = null;
 	
 	private boolean isPlayed;
+	
+	private int tenantId;
+	private int itemId;
+	private int memberId;
 
 	
     @Override
@@ -49,6 +53,8 @@ public class Booking {
 		
 		try{
 			
+			//System.out.println(linkedMap);
+			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 		
 			booking.setId((int) Double.parseDouble((linkedMap.get("id").toString())));
@@ -59,6 +65,11 @@ public class Booking {
 			booking.setCustomerName((String) linkedMap.get("customer"));
 			booking.setCost((int) Double.parseDouble((linkedMap.get("cost").toString())));
 			booking.setCompleted((Boolean)linkedMap.get("isCompleted"));
+			booking.setTenantId((int) Double.parseDouble((linkedMap.get("tenantId").toString())));
+			booking.setItemId((int) Double.parseDouble((linkedMap.get("itemId").toString())));
+			
+			booking.setMemberId((int)Double.parseDouble((linkedMap.get("memberId").toString())));
+
 		}
 		catch (Exception e){
 			e.printStackTrace();
@@ -155,5 +166,29 @@ public class Booking {
 
 	public void setImageLinks(List<String> imageLinks) {
 		this.imageLinks = imageLinks;
+	}
+
+	public int getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(int tenantId) {
+		this.tenantId = tenantId;
+	}
+
+	public int getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
+
+	public int getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(int memberId) {
+		this.memberId = memberId;
 	}
 }

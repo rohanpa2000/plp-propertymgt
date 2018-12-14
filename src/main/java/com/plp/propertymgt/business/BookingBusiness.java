@@ -27,7 +27,7 @@ public class BookingBusiness {
 		
 	}
 	
-	public List<Booking> getBookings(Date bookingDate){
+	public List<Booking> getBookings(Date bookingDate,int tenantId){
 		
         
         Calendar calEndDate = Calendar.getInstance();
@@ -35,7 +35,7 @@ public class BookingBusiness {
         calEndDate.add(Calendar.DATE, 1);
         //Date dateBefore30Days = calEndDate.getTime();
         
-        List<Booking> bookings = bookingData.getBookings(bookingDate);
+        List<Booking> bookings = bookingData.getBookings(bookingDate, tenantId);
         
         
         List<TimeSpacedIncident> Motions = motionBusiness.getIncidents(bookingDate, calEndDate.getTime(), 30,2,8);
@@ -248,8 +248,8 @@ public class BookingBusiness {
 		bookingData.updateBooking(booking);
 	}
 	
-	public void deleteBookings(List<Booking> bookings){
-		bookingData.deleteBookings(bookings);		
+	public void deleteBookings(List<Booking> bookings, int tenantid){
+		bookingData.deleteBookings(bookings, tenantid);		
 	}
 	
 	public void addBooking(Booking booking){

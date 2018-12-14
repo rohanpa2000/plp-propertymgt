@@ -3,45 +3,44 @@ DROP PROCEDURE IF EXISTS sp_insert_booking$$
 
 CREATE  PROCEDURE sp_insert_booking(
 	p_id int,
-	p_court_name varchar(45),
 	p_booking_date date,
 	p_start_time datetime,
 	p_end_time datetime,
 	p_customer_name varchar(45),
 	p_cost int,
-	p_is_completed varchar(45)
+	p_is_paid varchar(45),
+    p_tenant_id int,
+    p_item_id int
 )
 BEGIN
 
-	DECLARE l_id  INT; 
+			DECLARE l_member_id  INT; 
 
-	SET l_id = (SELECT id FROM booking WHERE id = p_id) ;
+			SET l_member_id = (SELECT member_id FROM member WHERE nickname like p_customer_name AND tenant_id = p_tenant_id) ;
     
-    select l_id;
     
-
-	IF (l_id IS NULL ) THEN
 
 		INSERT INTO booking
 		(
-			court_name,
 			start_time,
 			end_time,
 			booking_date,
-			customer_name,
 			cost,
-			is_completed
+			is_paid,
+            tenant_id,
+            item_id,
+            member_id
 		)
 		VALUES
 		(
-			p_court_name,
 			p_start_time,
 			p_end_time,
 			p_booking_date,
-			p_customer_name,
 			p_cost,
-			p_is_completed
+			p_is_paid,    
+            p_tenant_id,
+			p_item_id,
+            l_member_id
 		)
-    ;END IF
 ;END$$
 DELIMITER ;

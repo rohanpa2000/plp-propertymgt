@@ -17,7 +17,7 @@ BEGIN
 			is_completed
 
     FROM booking
-    WHERe 
+    WHERE 
 		booking_date = p_booking_date
 ;
 END
